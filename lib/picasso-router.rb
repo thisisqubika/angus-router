@@ -1,1 +1,1 @@
-require 'lib/picasso/router'
+require_relative 'picasso/router'
