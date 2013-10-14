@@ -130,7 +130,6 @@ module Picasso
       enc
     end
 
-    # TODO update
     # Returns regexp, block and path param names according to the route that matches
     # the given method and path.
     #
