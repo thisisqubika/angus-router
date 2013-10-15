@@ -10,10 +10,12 @@ describe Picasso::Router do
 
     let(:hello) { -> {} }
     let(:hello_dude) { -> {} }
+    let(:bye) { -> {} }
 
     before do
       router.on(:get, '/hello', &hello)
       router.on(:get, '/hello/:dude', &hello_dude)
+      router.on(:get, '/bye/', &bye)
     end
 
     it 'routes to the corresponding block' do
@@ -46,6 +48,77 @@ describe Picasso::Router do
       hello_dude.should_receive(:call).with(anything, :dude => 'joe')
 
       router.route(env)
+    end
+
+    context 'when requesting with a trailing slash' do
+      it 'invokes the correspoding route' do
+        hello.should_receive(:call)
+
+        env = Picasso::RackTest.env_for('/hello/', :method => 'GET')
+
+        router.route(env)
+      end
+    end
+
+    context 'when requesting without a trailing slash' do
+      it 'invokes the correspoding route' do
+        bye.should_receive(:call)
+
+        env = Picasso::RackTest.env_for('/bye', :method => 'GET')
+
+        router.route(env)
+      end
+    end
+
+    context 'when conflicting routes' do
+      let(:get_by_email) { ->(env, params) {} }
+      let(:get_by_id) { ->(env, params) {} }
+
+      context 'when parametrized route is defined first' do
+        before do
+          router.on(:get, '/users/:id', &get_by_id)
+          router.on(:get, '/users/by_email', &get_by_email)
+        end
+
+        it 'invokes the non parametrized route when no params' do
+          get_by_email.should_receive(:call)
+
+          env = Picasso::RackTest.env_for('/users/by_email', :method => 'GET')
+
+          router.route(env)
+        end
+
+        it 'invokes the parametrized route when params' do
+          get_by_id.should_receive(:call)
+
+          env = Picasso::RackTest.env_for('/users/1', :method => 'GET')
+
+          router.route(env)
+        end
+      end
+
+      context 'when parametrized route is defined last' do
+        before do
+          router.on(:get, '/users/by_email', &get_by_email)
+          router.on(:get, '/users/:id', &get_by_id)
+        end
+
+        it 'invokes the non parametrized route when no params' do
+          get_by_email.should_receive(:call)
+
+          env = Picasso::RackTest.env_for('/users/by_email', :method => 'GET')
+
+          router.route(env)
+        end
+
+        it 'invokes the parametrized route when params' do
+          get_by_id.should_receive(:call)
+
+          env = Picasso::RackTest.env_for('/users/1', :method => 'GET')
+
+          router.route(env)
+        end
+      end
     end
 
     it 'raises NotImplementedError when no route matches' do

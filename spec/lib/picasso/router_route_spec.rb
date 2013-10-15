@@ -14,4 +14,24 @@ describe Picasso::Router::Route do
       route.match('/route').should be
     end
   end
+
+  describe '#params?' do
+    context 'when params' do
+      let(:params) { Picasso::Router::PathPattern.new(//, [:id]) }
+      let(:route) { Picasso::Router::Route.new(:get, -> {}, params) }
+
+      it 'is true' do
+        route.params?.should be
+      end
+    end
+
+    context 'when no params' do
+      let(:params) { Picasso::Router::PathPattern.new(//, []) }
+      let(:route) { Picasso::Router::Route.new(:get, -> {}, params) }
+
+      it 'is false' do
+        route.params?.should_not be
+      end
+    end
+  end
 end

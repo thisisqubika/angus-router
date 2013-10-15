@@ -3,6 +3,8 @@ require 'rack'
 module Picasso
   class Router
 
+    RE_TRAILING_SLASH = %r{/\Z}
+
     SUPPORTED_HTTP_METHODS = [
       :get,
       :post,
@@ -34,6 +36,13 @@ module Picasso
         path_pattern.param_names
       end
 
+      # Returns the true if the current route contains defined params.
+      #
+      # @return [Boolean]
+      def params?
+        param_names.any?
+      end
+
       # Matches the given path against #path_pattern.
       #
       # @return [MatchData] when match succeeds
@@ -49,11 +58,19 @@ module Picasso
     # @param [String] path Url path
     # @param [Proc] block The block that will be yielded when an incoming request matches the route
     def on(m, path, &block)
+      path = path.gsub(RE_TRAILING_SLASH, '')
+
       unless SUPPORTED_HTTP_METHODS.include?(m)
         raise ArgumentError.new("Unsupported HTTP method #{m}")
       end
 
-      routes << Route.new(m.to_s.upcase, block, compile(path))
+      route = Route.new(m.to_s.upcase, block, compile(path))
+
+      if route.params?
+        dynamic_routes << route
+      else
+        static_routes << route
+      end
     end
 
     # Calls the corresponding previously registered block.
@@ -67,7 +84,8 @@ module Picasso
     def route(env)
       request = Rack::Request.new(env)
 
-      matched_route = match_route(env['REQUEST_METHOD'], request.path_info)
+      path_info = request.path_info.gsub(RE_TRAILING_SLASH, '')
+      matched_route = match_route(env['REQUEST_METHOD'], path_info)
 
       match, route_block, path_param_names = matched_route
 
@@ -94,8 +112,12 @@ module Picasso
       ]
     end
 
-    def routes
-      @routes ||= []
+    def dynamic_routes
+      @dynamic_routes ||= []
+    end
+
+    def static_routes
+      @static_routes ||= []
     end
 
     # Returns a path pattern base on the given pattern.
@@ -138,9 +160,11 @@ module Picasso
     #
     # @return [regexp, route_block, path_param_names]
     def match_route(method, path)
-      @routes.each do |route|
-        if method == route.method && match = route.match(path)
-          return [match, route.proc, route.param_names]
+      [static_routes, dynamic_routes].each do |routes|
+        routes.each do |route|
+          if method == route.method && match = route.match(path)
+            return [match, route.proc, route.param_names]
+          end
         end
       end
 
