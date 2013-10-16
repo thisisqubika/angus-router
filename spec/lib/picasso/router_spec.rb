@@ -121,6 +121,22 @@ describe Picasso::Router do
       end
     end
 
+    context 'when consecutive slashes' do
+      let(:consecutive) { -> {} }
+
+      before do
+        router.on(:get, '/con//se///cu/tive', &consecutive)
+      end
+
+      it 'invokes the route' do
+        consecutive.should_receive(:call)
+
+        env = Picasso::RackTest.env_for('///con//se/cu//tive', :method => 'GET')
+
+        router.route(env)
+      end
+    end
+
     it 'raises NotImplementedError when no route matches' do
       env = Picasso::RackTest.env_for('/no-route', :method => 'GET')
 

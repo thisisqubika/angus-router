@@ -84,7 +84,7 @@ module Picasso
     def route(env)
       request = Rack::Request.new(env)
 
-      path_info = request.path_info.gsub(RE_TRAILING_SLASH, '')
+      path_info = request.path_info.gsub(RE_TRAILING_SLASH, '').squeeze('/')
       matched_route = match_route(env['REQUEST_METHOD'], path_info)
 
       match, route_block, path_param_names = matched_route
@@ -131,7 +131,8 @@ module Picasso
     def compile(pattern)
       keys = []
 
-      pattern = pattern.to_str.gsub(/[^\?\%\\\/\:\*\w]/) { |c| encoded(c) }
+      pattern = pattern.to_str.squeeze('/')
+      pattern.gsub!(/[^\?\%\\\/\:\*\w]/) { |c| encoded(c) }
       pattern.gsub!(/(:\w+)/) do |match|
         keys << $1[1..-1]
         "([^/?#]+)"
