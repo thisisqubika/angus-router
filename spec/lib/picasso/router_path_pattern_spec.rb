@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-require 'lib/picasso/router'
+require 'lib/angus/router'
 
-describe Picasso::Router::PathPattern do
+describe Angus::Router::PathPattern do
 
-  subject { Picasso::Router::PathPattern.new(/[a-z]/, [:id]) }
+  subject { Angus::Router::PathPattern.new(/[a-z]/, [:id]) }
 
   describe '#match' do
 

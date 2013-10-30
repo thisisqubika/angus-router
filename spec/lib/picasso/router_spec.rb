@@ -1,10 +1,10 @@
 require 'spec_helper'
 
-require 'lib/picasso/router'
+require 'lib/angus/router'
 
-describe Picasso::Router do
+describe Angus::Router do
 
-  subject(:router) { Picasso::Router.new }
+  subject(:router) { Angus::Router.new }
 
   describe '#route' do
 
@@ -21,13 +21,13 @@ describe Picasso::Router do
     it 'routes to the corresponding block' do
       hello.should_receive(:call)
 
-      env = Picasso::RackTest.env_for('/hello', :method => 'GET')
+      env = Angus::RackTest.env_for('/hello', :method => 'GET')
 
       router.route(env)
     end
 
     it 'passes the env to the corresponding block' do
-      env = Picasso::RackTest.env_for('/hello', :method => 'GET')
+      env = Angus::RackTest.env_for('/hello', :method => 'GET')
 
       hello.should_receive(:call).with(env, anything)
 
@@ -37,13 +37,13 @@ describe Picasso::Router do
     it 'also routes to parametrized routes' do
       hello_dude.should_receive(:call)
 
-      env = Picasso::RackTest.env_for('/hello/joe', :method => 'GET')
+      env = Angus::RackTest.env_for('/hello/joe', :method => 'GET')
 
       router.route(env)
     end
 
     it 'sends path params' do
-      env = Picasso::RackTest.env_for('/hello/joe', :method => 'GET')
+      env = Angus::RackTest.env_for('/hello/joe', :method => 'GET')
 
       hello_dude.should_receive(:call).with(anything, :dude => 'joe')
 
@@ -54,7 +54,7 @@ describe Picasso::Router do
       it 'invokes the correspoding route' do
         hello.should_receive(:call)
 
-        env = Picasso::RackTest.env_for('/hello/', :method => 'GET')
+        env = Angus::RackTest.env_for('/hello/', :method => 'GET')
 
         router.route(env)
       end
@@ -64,7 +64,7 @@ describe Picasso::Router do
       it 'invokes the correspoding route' do
         bye.should_receive(:call)
 
-        env = Picasso::RackTest.env_for('/bye', :method => 'GET')
+        env = Angus::RackTest.env_for('/bye', :method => 'GET')
 
         router.route(env)
       end
@@ -83,7 +83,7 @@ describe Picasso::Router do
         it 'invokes the non parametrized route when no params' do
           get_by_email.should_receive(:call)
 
-          env = Picasso::RackTest.env_for('/users/by_email', :method => 'GET')
+          env = Angus::RackTest.env_for('/users/by_email', :method => 'GET')
 
           router.route(env)
         end
@@ -91,7 +91,7 @@ describe Picasso::Router do
         it 'invokes the parametrized route when params' do
           get_by_id.should_receive(:call)
 
-          env = Picasso::RackTest.env_for('/users/1', :method => 'GET')
+          env = Angus::RackTest.env_for('/users/1', :method => 'GET')
 
           router.route(env)
         end
@@ -106,7 +106,7 @@ describe Picasso::Router do
         it 'invokes the non parametrized route when no params' do
           get_by_email.should_receive(:call)
 
-          env = Picasso::RackTest.env_for('/users/by_email', :method => 'GET')
+          env = Angus::RackTest.env_for('/users/by_email', :method => 'GET')
 
           router.route(env)
         end
@@ -114,7 +114,7 @@ describe Picasso::Router do
         it 'invokes the parametrized route when params' do
           get_by_id.should_receive(:call)
 
-          env = Picasso::RackTest.env_for('/users/1', :method => 'GET')
+          env = Angus::RackTest.env_for('/users/1', :method => 'GET')
 
           router.route(env)
         end
@@ -131,14 +131,14 @@ describe Picasso::Router do
       it 'invokes the route' do
         consecutive.should_receive(:call)
 
-        env = Picasso::RackTest.env_for('///con//se/cu//tive', :method => 'GET')
+        env = Angus::RackTest.env_for('///con//se/cu//tive', :method => 'GET')
 
         router.route(env)
       end
     end
 
     it 'raises NotImplementedError when no route matches' do
-      env = Picasso::RackTest.env_for('/no-route', :method => 'GET')
+      env = Angus::RackTest.env_for('/no-route', :method => 'GET')
 
       expect {
         router.route(env)

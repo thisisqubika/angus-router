@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-require 'lib/picasso/router'
+require 'lib/angus/router'
 
-describe Picasso::Router::Route do
+describe Angus::Router::Route do
   subject(:route) do
-    path_pattern = Picasso::Router::PathPattern.new(/[a-z]/, [])
+    path_pattern = Angus::Router::PathPattern.new(/[a-z]/, [])
 
-    Picasso::Router::Route.new('POST', -> {}, path_pattern)
+    Angus::Router::Route.new('POST', -> {}, path_pattern)
   end
 
   describe '#match' do
@@ -17,8 +17,8 @@ describe Picasso::Router::Route do
 
   describe '#params?' do
     context 'when params' do
-      let(:params) { Picasso::Router::PathPattern.new(//, [:id]) }
-      let(:route) { Picasso::Router::Route.new(:get, -> {}, params) }
+      let(:params) { Angus::Router::PathPattern.new(//, [:id]) }
+      let(:route) { Angus::Router::Route.new(:get, -> {}, params) }
 
       it 'is true' do
         route.params?.should be
@@ -26,8 +26,8 @@ describe Picasso::Router::Route do
     end
 
     context 'when no params' do
-      let(:params) { Picasso::Router::PathPattern.new(//, []) }
-      let(:route) { Picasso::Router::Route.new(:get, -> {}, params) }
+      let(:params) { Angus::Router::PathPattern.new(//, []) }
+      let(:route) { Angus::Router::Route.new(:get, -> {}, params) }
 
       it 'is false' do
         route.params?.should_not be

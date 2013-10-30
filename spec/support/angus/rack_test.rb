@@ -5,7 +5,7 @@
 require "uri"
 require "rack"
 
-module Picasso
+module Angus
   module RackTest
 
     def self.env_for(path, env)

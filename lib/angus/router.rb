@@ -1,6 +1,6 @@
 require 'rack'
 
-module Picasso
+module Angus
   class Router
 
     RE_TRAILING_SLASH = %r{/\Z}
