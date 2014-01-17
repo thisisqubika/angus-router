@@ -6,14 +6,14 @@ Gem::Specification.new do |spec|
   spec.name            = 'angus-router'
   spec.version         = Angus::Router::VERSION
   spec.platform        = Gem::Platform::RUBY
-  spec.authors         = ['Gianfranco Zas']
+  spec.authors         = ['Gianfranco Zas', 'Adrian Gomez']
   spec.summary         = 'Router for Rack applications.'
   spec.email           = %w[angus@moove-it.com]
   spec.description     = <<-DESCRIPTION
     Angus-router is a powerful router for your next generation of awesome Rack applications.
     Just throw your shit into angus-router and run away.
   DESCRIPTION
-  spec.homepage      = 'http://mooveit.github.io/angus-router'
+  spec.homepage      = 'https://github.com/Moove-it/angus-router'
   spec.license       = 'MIT'
 
   spec.files           = Dir.glob('{lib}/**/*')
