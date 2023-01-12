@@ -147,8 +147,8 @@ module Angus
     #
     # @return [String]
     def encoded(char)
-      enc = URI.escape(char)
-      enc = "(?:#{Regexp.escape enc}|#{URI.escape char, /./})" if enc == char
+      enc = CGI.escape(char)
+      enc = "(?:#{Regexp.escape(enc)}|#{CGI.escape(char)})" if enc == char
       enc = "(?:#{enc}|#{encoded('+')})" if char == " "
       enc
     end
